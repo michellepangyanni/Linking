@@ -1,0 +1,28 @@
+COMP 321 Project 3: Linking
+<Replace with your name(s) and NetID(s).>
+
+---(Do not write lines of text that exceed the width of this line.)------------
+
+PROBLEM 7.6
+
+<Replace with the answer to problem 7.6.>
+
+PROBLEM 7.9
+
+<Replace with the answer to problem 7.9.>
+
+PROBLEM 7.12
+
+<Replace with the answer to problem 7.12.>
+
+READJCF
+
+TESTING STRATEGY
+
+<Replace with a detailed description of your testing strategy.>
+
+TWO THINGS I LEARNED
+
+<Replace with a description of two features of C that are used in the
+ provided code for this assignment but weren't taught in lecture or lab
+ that you learned about while completing this assignment.>
