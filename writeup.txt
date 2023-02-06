@@ -1,5 +1,5 @@
 COMP 321 Project 3: Linking
-<Replace with your name(s) and NetID(s).>
+<Michelle Pang, yp29; >
 
 ---(Do not write lines of text that exceed the width of this line.)------------
 
@@ -17,16 +17,13 @@ count           yes                         local           swap.o      .bss
 PROBLEM 7.9
 
 Since the execution of the program involves two objects named main, the 
-strong implementation in foo6.c overrides the weak definition in bar6.c. The
-address printed is associated with the function main, not the char, explaining
-why it printed a result when main had not yet been initialized.
+strong implementation in foo6.c overrides the weak definition in bar6.c. 
+The address printed is associated with the function main, not the char, 
+explaining why it printed a result when main had not yet been initialized. 
+A certain amount of memory is allocated for the machine code instructions, 
+the byte that is print out is the first byte of the function memory, so it 
+has a value. 
 
-Main function --> machine code instructions
-a certain amount of memory is allocated for the machine code instructions, 
-the byte that is print out is the first byte of the function memory, so it has a value. 
-
-bar6 character refer to the first byte of the function memory, thus it does have 
-value, and the value will be printed out.
 
 PROBLEM 7.12
 
@@ -65,3 +62,14 @@ TWO THINGS I LEARNED
 <Replace with a description of two features of C that are used in the
  provided code for this assignment but weren't taught in lecture or lab
  that you learned about while completing this assignment.>
+
+
+parse file use fread to 
+process -jcf-constant-pool()
+print-jcf-constant()//recursion to solve : check type of data. If is terminal, print it out, not: go another layer
+destory-jcf-constant-pool is used to free memory. 
+use different struct (malloc) to pass different sizes. 
+
+
+
+
