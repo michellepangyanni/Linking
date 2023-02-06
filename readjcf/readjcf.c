@@ -236,6 +236,7 @@ readjcf_error(void)
  *   this function will print the constant and return 0.  Otherwise, -1
  *   is returned.
  */
+//THIRD
 static int
 print_jcf_constant(struct jcf_state *jcf, uint16_t index,
     uint8_t expected_tag)
@@ -291,6 +292,7 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
  *   Reads and verifies the Java class file header from file "jcf.f".
  *   Returns 0 on success and -1 on failure.
  */
+//FIRST
 static int
 process_jcf_header(struct jcf_state *jcf)
 {
@@ -315,6 +317,7 @@ process_jcf_header(struct jcf_state *jcf)
  *   This function allocates memory that must be destroyed later, even if
  *   the function fails.
  */
+//SECOND
 static int
 process_jcf_constant_pool(struct jcf_state *jcf)
 {
