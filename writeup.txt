@@ -5,8 +5,15 @@ COMP 321 Project 3: Linking
 
 PROBLEM 7.6
 
-<Replace with the answer to problem 7.6.>
-
+Symbol          swap.o .symtab entry?       Symbol Type     Module      Section
+buf             yes                         extern          m.o         .data
+bufp0           yes                         global          swap.o      .data
+bufp1           yes                         local           swap.o      .bss
+swap            yes                         global          swap.o      .text
+temp            no                          --              --          --
+incr            yes                         local           swap.o      .text
+count           yes                         local           swap.o      .bss
+s
 PROBLEM 7.9
 
 <Replace with the answer to problem 7.9.>
