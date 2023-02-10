@@ -236,7 +236,6 @@ readjcf_error(void)
  *   this function will print the constant and return 0.  Otherwise, -1
  *   is returned.
  */
-//THIRD
 static int
 print_jcf_constant(struct jcf_state *jcf, uint16_t index,
     uint8_t expected_tag)
@@ -246,35 +245,65 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 	assert(jcf != NULL);
 
 	// Prevent an "uninitialized variable" warning.  REMOVE THIS STATEMENT!
-	info = NULL;
+	//info = NULL;
 
 	// Prevent "unused parameter" warnings.  REMOVE THESE STATEMENTS!
-	(void)index;
-	(void)expected_tag;
+	// (void)index;
+	// (void)expected_tag;
 
-	// Verify the index.
+	// Verify the index: index not 0, and smaller than count.
+	
+	if (index == 0 || index >= jcf->constant_pool.count){
+		return (-1);
+	}
 
-	// Verify the tag.
+	// Verify the tag: expected tag = index tag.
+	info = jcf->constant_pool.pool[index];
+	if (expected_tag != info->tag){
+		return (-1);
+	}
 
 	// Print the constant.
 	switch (info->tag) {
 	case JCF_CONSTANT_Class:
+	{		
 		// Print the class.
+		struct jcf_cp_class_info *class = (struct jcf_cp_class_info *)info;
+		print_jcf_constant(jcf, class->name_index, JCF_CONSTANT_Utf8); 
 		break;
+	}
+
 	case JCF_CONSTANT_Fieldref:
 	case JCF_CONSTANT_Methodref:
 	case JCF_CONSTANT_InterfaceMethodref:
+	{
 		/* 
 		 * Print the reference, with the Class and NameAndType
 		 * separated by a '.'.
 		 */
+		struct jcf_cp_ref_info *ref = (struct jcf_cp_ref_info *)info;
+		print_jcf_constant(jcf, ref -> class_index, JCF_CONSTANT_Class);
+		printf(".");
+		print_jcf_constant(jcf, ref -> name_and_type_index, JCF_CONSTANT_NameAndType);
 		break;
+	}
+		
 	case JCF_CONSTANT_NameAndType:
-		// Print the name and type.
+	{
+		// Print the name and type(separated by a " ").
+		struct jcf_cp_nameandtype_info *name_and_type = (struct jcf_cp_nameandtype_info *)info;
+		print_jcf_constant(jcf, name_and_type -> name_index, JCF_CONSTANT_Utf8);
+		printf(" ");
+		print_jcf_constant(jcf, name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
 		break;
+	}
 	case JCF_CONSTANT_Utf8:
+	{
 		// Print the UTF8.
+		struct jcf_cp_utf8_info *utf8 = (struct jcf_cp_utf8_info *)info;
+		printf("%.*s", utf8 ->length, utf8 ->bytes);
 		break;
+	}
 	default:
 		// Ignore all other constants.
 		break;
@@ -292,16 +321,28 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
  *   Reads and verifies the Java class file header from file "jcf.f".
  *   Returns 0 on success and -1 on failure.
  */
-//FIRST
 static int
 process_jcf_header(struct jcf_state *jcf)
 {
-
+	struct jcf_header header;
 	assert(jcf != NULL);
 
-	// Read the header.
+	// Read the header ("jcf.f" must be a valid open file).
+	if (fread(&header, sizeof(struct jcf_header), 1, jcf -> f) != 1)
+	{
+		return (-1);
+	}
+
+	//Byteswapping
+	header.magic = ntohl(header.magic);
+	header.minor_version = ntohs(header.minor_version);
+	header.major_version = ntohs(header.major_version);
 
 	// Verify the magic number.
+	if (header.magic != JCF_MAGIC)
+	{
+		return (-1);
+	}
 
 	return (0);
 }
@@ -317,7 +358,6 @@ process_jcf_header(struct jcf_state *jcf)
  *   This function allocates memory that must be destroyed later, even if
  *   the function fails.
  */
-//SECOND
 static int
 process_jcf_constant_pool(struct jcf_state *jcf)
 {
@@ -396,9 +436,17 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 static void
 destroy_jcf_constant_pool(struct jcf_constant_pool *pool)
 {
-
 	assert(pool != NULL);
 	assert(pool->pool != NULL);
+	int index;
+	//Free every memory allocated in the pool
+	for (index = 0; index < pool ->count; index ++){
+		if (pool -> pool[index] != NULL){
+			free(pool -> pool[index]);
+		}
+	}
+	//Free the entire pool itself.
+	free(pool -> pool);
 }
 
 /*
@@ -414,10 +462,12 @@ destroy_jcf_constant_pool(struct jcf_constant_pool *pool)
 static int
 process_jcf_body(struct jcf_state *jcf)
 {
-
+	struct jcf_body body;
 	assert(jcf != NULL);
-
 	// Read the body.
+	if (fread(&body, sizeof(struct jcf_body), 1, jcf -> f) != 1){
+		return (-1);
+	}
 
 	return (0);
 }
@@ -435,12 +485,28 @@ process_jcf_body(struct jcf_state *jcf)
 static int
 process_jcf_interfaces(struct jcf_state *jcf)
 {
+	int index;
+	uint16_t interface_count;
+	uint16_t interface;
+
+	//Byteswapping： Question--> should I do it here once, or do it twice like implemented below?
+	interface_count = ntohs(interface_count);
+	interface = ntohs(interface);
 
 	assert(jcf != NULL);
 
 	// Read the interfaces count.
+	if (fread(&interface_count, sizeof(interface_count),1, jcf -> f) != 1){
+		return (-1);
+	}
+	interface_count = ntohs(interface_count);
 
 	// Read the interfaces.
+	for (index = 0; index < interface_count; index++){
+		if (fread(&interface, sizeof(interface), 1, jcf -> f) != 1){
+			return (-1);
+		}
+	}
 
 	return (0);
 }
@@ -534,7 +600,6 @@ process_jcf_fields_and_methods_helper(struct jcf_state *jcf)
 		if (process_jcf_attributes(jcf) != 0)
 			return (-1);
 	}
-
 	return (0);
 }
 
@@ -557,19 +622,46 @@ process_jcf_attributes(struct jcf_state *jcf)
 	assert(jcf != NULL);
 
 	// Prevent an "uninitialized variable" warning.  REMOVE THIS STATEMENT!
-	attributes_count = 0;
+	// attributes_count = 0;
 
 	// Read the attributes count.
+	if (fread(&attributes_count, sizeof(attributes_count), 1, jcf -> f) != 1){
+		return (-1);
+	}
+	attributes_count = ntohs(attributes_count);
 
 	// Read the attributes.
 	for (i = 0; i < attributes_count; i++) {
+		uint16_t name_index;
+		uint32_t length;
+		uint8_t info_data;
+		u_int32_t j;
 		// Read the attribute name index.
+		if (fread(&name_index, sizeof(name_index), 1, jcf -> f) != 1){
+			return (-1);
+		}
+		name_index = ntohs(name_index);
 
 		// Read the attribute length.
+		if (fread(&length, sizeof(length), 1, jcf -> f) != 1){
+			return (-1);
+		}
+		length = ntohl(length);
 
 		// Read the attribute data.
+		for (j = 0; j < length; j++){
+			if (fread(&info_data, sizeof(info_data), 1, jcf -> f) != 1){
+				return (-1);
+			}
+		}
+		//Testing
+		if (jcf ->verbose_flag){
+			printf("Attribute count: %u\n", attributes_count);
+			printf("		Attribute #0: name index: %u\n", name_index);
+			printf("		Attribute #0: length: %u\n", length);
+			printf("		Attribute #0: info data: %u\n", info_data);
+		}
 	}
-
 	return (0);
 }
 
