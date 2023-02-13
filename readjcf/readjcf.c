@@ -412,6 +412,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 		case JCF_CONSTANT_String:
 		case JCF_CONSTANT_Class:
 		case JCF_CONSTANT_MethodType:
+		{
 			// Read a constant that contains one u2.
 			struct jcf_cp_info_1u2 *cur_u2 = 
 				Malloc(sizeof(struct jcf_cp_info_1u2));
@@ -425,11 +426,13 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			cur_u2->u2 = ntohs(cur_u2->u2);
 			flag = 1;
 			break;
+		}	
 		case JCF_CONSTANT_Fieldref:
 		case JCF_CONSTANT_Methodref:
 		case JCF_CONSTANT_InterfaceMethodref:
 		case JCF_CONSTANT_NameAndType:
 		case JCF_CONSTANT_InvokeDynamic:
+		{
 			// Read a constant that contains two u2's.
 			struct jcf_cp_info_2u2 *cur_2u2 = 
 				Malloc(sizeof(struct jcf_cp_info_2u2));
@@ -444,8 +447,10 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			cur_2u2->body.u2_2 = ntohs(cur_2u2->body.u2_2);
 			flag = 1;
 			break;
+		}
 		case JCF_CONSTANT_Integer:
 		case JCF_CONSTANT_Float:
+		{
 			// Read a constant that contains one u4.
 			struct jcf_cp_info_1u4 *cur_u4 = 
 				Malloc(sizeof(struct jcf_cp_info_1u4));
@@ -459,8 +464,10 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			cur_u4->u4 = ntohs(cur_u4->u4);
 			flag = 1;
 			break;
+		}
 		case JCF_CONSTANT_Long:
 		case JCF_CONSTANT_Double:
+		{
 			/* 
 			 * Read a constant that contains two u4's and
 			 * occupies two indices in the constant pool. 
@@ -482,9 +489,14 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			cur_2u4->body.u4_2 = ntohs(cur_2u4->body.u4_2);
 			flag = 0;
 			break;
-		case JCF_CONSTANT_Utf8:
+		}
+		case JCF_CONSTANT_Utf8:;
+		{
 			// Read a UTF8 constant.
 			uint16_t length;
+			if (fread(&(length), sizeof(length), 1, jcf->f) != 1) {
+			    	return (-1);
+			}
 			struct jcf_cp_utf8_info *cur_utf8 = 
 			    Malloc(sizeof(struct jcf_cp_utf8_info) 
 			    + length + 1);
@@ -495,9 +507,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			sizeof(cur_utf8->length), 1, jcf->f) != 1) {
 			    	return (-1);
 			}
-			cur_utf8->bytes[length] = '/0';
+			cur_utf8->bytes[length] = '\0';
 			int r = fread(&(cur_utf8->bytes), 
-			    sizeof(length * sizeof(uint8_t)), 1, jcf->f)
+			    sizeof(length * sizeof(uint8_t)), 1, jcf->f);
 			if (r != 0 || r != 1) {
 			    	return (-1);
 			}
@@ -505,7 +517,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			cur_utf8->length = length;
 			flag = 1;
 			break;
-		case JCF_CONSTANT_MethodHandle:
+		}
+		case JCF_CONSTANT_MethodHandle:;
+		{
 			// Read a constant that contains one u1 and one u2.
 			struct jcf_cp_info_1u1_1u2 *cur_1u1_1u2 = 
 				Malloc(sizeof(struct jcf_cp_info_1u1_1u2));
@@ -524,6 +538,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			cur_1u1_1u2->body.u2 = ntohs(cur_1u1_1u2->body.u2);
 			flag = 1;
 			break;
+		}
 		default:
 			return (-1);
 		}
@@ -786,12 +801,12 @@ process_jcf_attributes(struct jcf_state *jcf)
 		//Testing
 		if (jcf ->verbose_flag){
 			printf("Attribute count: %u\n", attributes_count);
-			printf("		Attribute #0: 
-			    name index: %u\n", name_index);
-			printf("		Attribute #0: 
-			    length: %u\n", length);
-			printf("		Attribute #0: 
-			    info data: %u\n", info_data);
+			printf("		Attribute #0: name index: %u\n", 
+			    name_index);
+			printf("		Attribute #0: length: %u\n", 
+			    length);
+			printf("		Attribute #0: info data: %u\n", 
+			    info_data);
 		}
 	}
 	return (0);
