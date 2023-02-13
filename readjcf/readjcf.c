@@ -507,9 +507,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			    sizeof(cur_1u1_1u2->body.u2), 1, jcf->f) != 1) {
 			    	return (-1);
 			    }
-			cur_2u2->tag = tag;
-			cur_2u2->body.u1 = ntohs(cur_2u2->body.u1);
-			cur_2u2->body.u2 = ntohs(cur_2u2->body.u2);
+			cur_1u1_1u2->tag = tag;
+			cur_1u1_1u2->body.u1 = ntohs(cur_1u1_1u2->body.u1);
+			cur_1u1_1u2->body.u2 = ntohs(cur_1u1_1u2->body.u2);
 			flag = 1;
 			break;
 		default:
@@ -523,6 +523,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	 * constants not containing references to other constants after
 	 * them in the pool. 
 	 */
+	
 
 	return (0);
 }
