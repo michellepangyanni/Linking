@@ -487,7 +487,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			}
 			cur_utf8->bytes[length] = '/0';
 			if (fread(&(cur_utf8->bytes), 
-			sizeof(length * unit8_t), 1, jcf->f) != anyOf(0, 1)) {
+			sizeof(length * uint8_t), 1, jcf->f) != anyOf(0, 1)) {
 			    	return (-1);
 			}
 		
@@ -519,6 +519,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 		}
 	}
 
+
 	/* 
 	 * Print the dependencies if requested.  This must be done after
 	 * reading the entire pool because there are no guarantees about
@@ -535,7 +536,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
                 		print_jcf_constant(jcf, i, t);
 				printf("\n");
 			} 
+		}
 	}
+
 
 
 	return (0);
