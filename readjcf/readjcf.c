@@ -134,6 +134,10 @@ struct jcf_cp_info_1u4 {
 	uint32_t	u4;
 } __attribute__((packed));
 
+/* 
+ * Define the generic constant pool info structure for all constants
+ * that have two u4.
+ */
 struct jcf_cp_info_2u4 {
 	uint8_t		tag;
 	struct {
@@ -276,7 +280,8 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 	case JCF_CONSTANT_Class:
 	{		
 		// Print the class.
-		struct jcf_cp_class_info *class = (struct jcf_cp_class_info *)info;
+		struct jcf_cp_class_info *class = 
+		    (struct jcf_cp_class_info *)info;
 		print_jcf_constant(jcf, class->name_index, JCF_CONSTANT_Utf8); 
 		break;
 	}
@@ -292,17 +297,21 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 		struct jcf_cp_ref_info *ref = (struct jcf_cp_ref_info *)info;
 		print_jcf_constant(jcf, ref -> class_index, JCF_CONSTANT_Class);
 		printf(".");
-		print_jcf_constant(jcf, ref -> name_and_type_index, JCF_CONSTANT_NameAndType);
+		print_jcf_constant(jcf, ref -> name_and_type_index, 
+		    JCF_CONSTANT_NameAndType);
 		break;
 	}
 		
 	case JCF_CONSTANT_NameAndType:
 	{
 		// Print the name and type(separated by a " ").
-		struct jcf_cp_nameandtype_info *name_and_type = (struct jcf_cp_nameandtype_info *)info;
-		print_jcf_constant(jcf, name_and_type -> name_index, JCF_CONSTANT_Utf8);
+		struct jcf_cp_nameandtype_info *name_and_type = 
+		    (struct jcf_cp_nameandtype_info *)info;
+		print_jcf_constant(jcf, 
+		    name_and_type -> name_index, JCF_CONSTANT_Utf8);
 		printf(" ");
-		print_jcf_constant(jcf, name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
+		print_jcf_constant(jcf, 
+		    name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
 		break;
 	}
 	case JCF_CONSTANT_Utf8:
@@ -477,7 +486,8 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			// Read a UTF8 constant.
 			uint16_t length;
 			struct jcf_cp_utf8_info *cur_utf8 = 
-			    Malloc(sizeof(struct jcf_cp_utf8_info) + length + 1);
+			    Malloc(sizeof(struct jcf_cp_utf8_info) 
+			    + length + 1);
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_utf8;
 			length = ntohs(length);
@@ -486,11 +496,11 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			    	return (-1);
 			}
 			cur_utf8->bytes[length] = '/0';
-			if (fread(&(cur_utf8->bytes), 
-			sizeof(length * sizeof(uint8_t)), 1, jcf->f) != anyOf(0, 1)) {
+			int r = fread(&(cur_utf8->bytes), 
+			    sizeof(length * sizeof(uint8_t)), 1, jcf->f)
+			if (r != 0 || r != 1) {
 			    	return (-1);
 			}
-		
 			cur_utf8->tag = tag;
 			cur_utf8->length = length;
 			flag = 1;
@@ -531,11 +541,10 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			if (t == JCF_CONSTANT_Fieldref || 
 			    t == JCF_CONSTANT_Methodref ||
 			    t == JCF_CONSTANT_InterfaceMethodref) {
-					printf("Dependency - ");
-                	print_jcf_constant(jcf, i, t);
-					printf("\n");
-			}
-			
+				printf("Dependency - ");
+                		print_jcf_constant(jcf, i, t);
+				printf("\n");
+			}	
 		} 
 	}
 
@@ -606,7 +615,8 @@ process_jcf_interfaces(struct jcf_state *jcf)
 	uint16_t interface_count;
 	uint16_t interface;
 
-	//Byteswapping： Question--> should I do it here once, or do it twice like implemented below?
+	//Byteswapping： Question--> should I do it here once, or do it 
+	//twice like implemented below?
 	interface_count = ntohs(interface_count);
 	interface = ntohs(interface);
 
@@ -742,7 +752,8 @@ process_jcf_attributes(struct jcf_state *jcf)
 	// attributes_count = 0;
 
 	// Read the attributes count.
-	if (fread(&attributes_count, sizeof(attributes_count), 1, jcf -> f) != 1){
+	if (fread(&attributes_count, sizeof(attributes_count), 1,
+	    jcf -> f) != 1){
 		return (-1);
 	}
 	attributes_count = ntohs(attributes_count);
@@ -767,16 +778,20 @@ process_jcf_attributes(struct jcf_state *jcf)
 
 		// Read the attribute data.
 		for (j = 0; j < length; j++){
-			if (fread(&info_data, sizeof(info_data), 1, jcf -> f) != 1){
+			if (fread(&info_data, sizeof(info_data), 
+			    1, jcf -> f) != 1){
 				return (-1);
 			}
 		}
 		//Testing
 		if (jcf ->verbose_flag){
 			printf("Attribute count: %u\n", attributes_count);
-			printf("		Attribute #0: name index: %u\n", name_index);
-			printf("		Attribute #0: length: %u\n", length);
-			printf("		Attribute #0: info data: %u\n", info_data);
+			printf("		Attribute #0: 
+			    name index: %u\n", name_index);
+			printf("		Attribute #0: 
+			    length: %u\n", length);
+			printf("		Attribute #0: 
+			    info data: %u\n", info_data);
 		}
 	}
 	return (0);
