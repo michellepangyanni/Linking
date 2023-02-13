@@ -477,7 +477,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			// Read a UTF8 constant.
 			uint16_t length;
 			struct jcf_cp_utf8_info *cur_utf8 = 
-			    Malloc(sizeof(struct jcf_cp_utf8_info) + length);
+			    Malloc(sizeof(struct jcf_cp_utf8_info) + length + 1);
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_utf8;
 			length = ntohs(length);
@@ -485,10 +485,12 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			sizeof(cur_utf8->length), 1, jcf->f) != 1) {
 			    	return (-1);
 			}
+			cur_utf8->bytes[length] = '/0';
 			if (fread(&(cur_utf8->bytes), 
 			sizeof(length * unit8_t), 1, jcf->f) != anyOf(0, 1)) {
 			    	return (-1);
 			}
+		
 			cur_utf8->tag = tag;
 			cur_utf8->length = length;
 			flag = 1;
@@ -523,7 +525,18 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	 * constants not containing references to other constants after
 	 * them in the pool. 
 	 */
-	
+	if (jcf->depends_flag) {
+		for (int i = 0; i < constant_pool_count; i++) {
+			uint8_t t = constant_pool_count[i]->tag;
+			if (t == JCF_CONSTANT_Fieldref || 
+			    t == JCF_CONSTANT_Methodref ||
+			    t == JCF_CONSTANT_InterfaceMethodref) {
+				printf("Dependency - ");
+                		print_jcf_constant(jcf, i, t);
+				printf("\n");
+			} 
+	}
+
 
 	return (0);
 }
