@@ -214,7 +214,7 @@ struct jcf_state {
 // Declare the local function prototypes.
 static void	readjcf_error(void);
 static int	print_jcf_constant(struct jcf_state *jcf,
-		    uint16_t index, uint8_t expected_tag);
+			uint16_t index, uint8_t expected_tag);
 static int	process_jcf_header(struct jcf_state *jcf);
 static int	process_jcf_constant_pool(struct jcf_state *jcf);
 static void	destroy_jcf_constant_pool(struct jcf_constant_pool *pool);
@@ -250,7 +250,7 @@ readjcf_error(void)
  */
 static int
 print_jcf_constant(struct jcf_state *jcf, uint16_t index,
-    uint8_t expected_tag)
+	uint8_t expected_tag)
 {
 	struct jcf_cp_info *info;
 
@@ -281,7 +281,7 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 	{		
 		// Print the class.
 		struct jcf_cp_class_info *class = 
-		    (struct jcf_cp_class_info *)info;
+			(struct jcf_cp_class_info *)info;
 		print_jcf_constant(jcf, class->name_index, JCF_CONSTANT_Utf8); 
 		break;
 	}
@@ -298,7 +298,7 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 		print_jcf_constant(jcf, ref -> class_index, JCF_CONSTANT_Class);
 		printf(".");
 		print_jcf_constant(jcf, ref -> name_and_type_index, 
-		    JCF_CONSTANT_NameAndType);
+			JCF_CONSTANT_NameAndType);
 		break;
 	}
 		
@@ -306,12 +306,12 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 	{
 		// Print the name and type(separated by a " ").
 		struct jcf_cp_nameandtype_info *name_and_type = 
-		    (struct jcf_cp_nameandtype_info *)info;
+			(struct jcf_cp_nameandtype_info *)info;
 		print_jcf_constant(jcf, 
-		    name_and_type -> name_index, JCF_CONSTANT_Utf8);
+			name_and_type -> name_index, JCF_CONSTANT_Utf8);
 		printf(" ");
 		print_jcf_constant(jcf, 
-		    name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
+			name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
 		break;
 	}
 	case JCF_CONSTANT_Utf8:
@@ -388,7 +388,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 
 	// Read the constant pool count.
 	if (fread(&constant_pool_count, sizeof(constant_pool_count),
-	    1, jcf->f) != 1) {
+		1, jcf->f) != 1) {
 		return (-1);
 		}
 
@@ -418,9 +418,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_u2;
 			if (fread(&(cur_u2->u2), 
-			    sizeof(cur_u2->u2), 1, jcf->f) != 1) {
-			    	return (-1);
-			    }
+				sizeof(cur_u2->u2), 1, jcf->f) != 1) {
+					return (-1);
+				}
 			cur_u2->tag = tag;
 			cur_u2->u2 = ntohs(cur_u2->u2);
 			flag = 1;
@@ -436,9 +436,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_2u2;
 			if (fread(&(cur_2u2->body.u2_1), 
-			    sizeof(cur_2u2->body.u2_1), 1, jcf->f) != 1) {
-			    	return (-1);
-			    }
+				sizeof(cur_2u2->body.u2_1), 1, jcf->f) != 1) {
+					return (-1);
+				}
 			cur_2u2->tag = tag;
 			cur_2u2->body.u2_1 = ntohs(cur_2u2->body.u2_1);
 			cur_2u2->body.u2_2 = ntohs(cur_2u2->body.u2_2);
@@ -452,9 +452,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_u4;
 			if (fread(&(cur_u4->u4), 
-			    sizeof(cur_u4->u4), 1, jcf->f) != 1) {
-			    	return (-1);
-			    }
+				sizeof(cur_u4->u4), 1, jcf->f) != 1) {
+					return (-1);
+				}
 			cur_u4->tag = tag;
 			cur_u4->u4 = ntohs(cur_u4->u4);
 			flag = 1;
@@ -471,11 +471,11 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 				(struct jcf_cp_info *)cur_2u4;
 			if (fread(&(cur_2u4->body.u4_1), 
 			sizeof(cur_2u4->body.u4_1), 1, jcf->f) != 1) {
-			    	return (-1);
+					return (-1);
 			}
 			if (fread(&(cur_2u4->body.u4_2), 
 			sizeof(cur_2u4->body.u4_2), 1, jcf->f) != 1) {
-			    	return (-1);
+					return (-1);
 			}
 			cur_2u4->tag = tag;
 			cur_2u4->body.u4_1 = ntohs(cur_2u4->body.u4_1);
@@ -486,20 +486,20 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			// Read a UTF8 constant.
 			uint16_t length;
 			struct jcf_cp_utf8_info *cur_utf8 = 
-			    Malloc(sizeof(struct jcf_cp_utf8_info) 
-			    + length + 1);
+				Malloc(sizeof(struct jcf_cp_utf8_info) 
+				+ length + 1);
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_utf8;
 			length = ntohs(length);
 			if (fread(&(cur_utf8->length), 
 			sizeof(cur_utf8->length), 1, jcf->f) != 1) {
-			    	return (-1);
+					return (-1);
 			}
 			cur_utf8->bytes[length] = '/0';
 			int r = fread(&(cur_utf8->bytes), 
-			    sizeof(length * sizeof(uint8_t)), 1, jcf->f)
+				sizeof(length * sizeof(uint8_t)), 1, jcf->f);
 			if (r != 0 || r != 1) {
-			    	return (-1);
+					return (-1);
 			}
 			cur_utf8->tag = tag;
 			cur_utf8->length = length;
@@ -512,13 +512,13 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_1u1_1u2;
 			if (fread(&(cur_1u1_1u2->body.u1), 
-			    sizeof(cur_1u1_1u2->body.u1), 1, jcf->f) != 1) {
-			    	return (-1);
-			    }
+				sizeof(cur_1u1_1u2->body.u1), 1, jcf->f) != 1) {
+					return (-1);
+				}
 			if (fread(&(cur_1u1_1u2->body.u2), 
-			    sizeof(cur_1u1_1u2->body.u2), 1, jcf->f) != 1) {
-			    	return (-1);
-			    }
+				sizeof(cur_1u1_1u2->body.u2), 1, jcf->f) != 1) {
+					return (-1);
+				}
 			cur_1u1_1u2->tag = tag;
 			cur_1u1_1u2->body.u1 = ntohs(cur_1u1_1u2->body.u1);
 			cur_1u1_1u2->body.u2 = ntohs(cur_1u1_1u2->body.u2);
@@ -539,10 +539,10 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 		for (int i = 1; i < constant_pool_count; i++) {
 			uint8_t t = jcf->constant_pool.pool[i]->tag;
 			if (t == JCF_CONSTANT_Fieldref || 
-			    t == JCF_CONSTANT_Methodref ||
-			    t == JCF_CONSTANT_InterfaceMethodref) {
+				t == JCF_CONSTANT_Methodref ||
+				t == JCF_CONSTANT_InterfaceMethodref) {
 				printf("Dependency - ");
-                		print_jcf_constant(jcf, i, t);
+						print_jcf_constant(jcf, i, t);
 				printf("\n");
 			}	
 		} 
@@ -711,14 +711,14 @@ process_jcf_fields_and_methods_helper(struct jcf_state *jcf)
 
 		// Print the info.
 		if (jcf->exports_flag &&
-		    info.access_flags & JCF_ACC_PUBLIC) {
+			info.access_flags & JCF_ACC_PUBLIC) {
 			printf("Export - ");
 			if (print_jcf_constant(jcf, info.name_index,
-			    JCF_CONSTANT_Utf8) != 0)
+				JCF_CONSTANT_Utf8) != 0)
 				return (-1);
 			printf(" ");
 			if (print_jcf_constant(jcf, info.descriptor_index,
-			    JCF_CONSTANT_Utf8) != 0)
+				JCF_CONSTANT_Utf8) != 0)
 				return (-1);
 			printf("\n");
 		}
@@ -753,7 +753,7 @@ process_jcf_attributes(struct jcf_state *jcf)
 
 	// Read the attributes count.
 	if (fread(&attributes_count, sizeof(attributes_count), 1,
-	    jcf -> f) != 1){
+		jcf -> f) != 1){
 		return (-1);
 	}
 	attributes_count = ntohs(attributes_count);
@@ -779,19 +779,19 @@ process_jcf_attributes(struct jcf_state *jcf)
 		// Read the attribute data.
 		for (j = 0; j < length; j++){
 			if (fread(&info_data, sizeof(info_data), 
-			    1, jcf -> f) != 1){
+				1, jcf -> f) != 1){
 				return (-1);
 			}
 		}
 		//Testing
 		if (jcf ->verbose_flag){
 			printf("Attribute count: %u\n", attributes_count);
-			printf("		Attribute #0: 
-			    name index: %u\n", name_index);
-			printf("		Attribute #0: 
-			    length: %u\n", length);
-			printf("		Attribute #0: 
-			    info data: %u\n", info_data);
+			printf("		Attribute #0: name index: %u\n", 
+			name_index);
+			printf("		Attribute #0: length: %u\n", 
+			length);
+			printf("		Attribute #0: info data: %u\n", 
+			info_data);
 		}
 	}
 	return (0);
@@ -863,8 +863,8 @@ main(int argc, char **argv)
 	}
 	if (abort_flag || optind == argc || argc > optind + 1) {
 		fprintf(stderr, "usage: %s [-d] [-e] [-v] <input filename>\n",
-		    argv[0]);
-	        return (1); // Indicate an error.
+			argv[0]);
+			return (1); // Indicate an error.
 	}
 
 	// Initialize the jcf_state structure.
