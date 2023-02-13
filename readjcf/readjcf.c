@@ -487,7 +487,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			}
 			cur_utf8->bytes[length] = '/0';
 			if (fread(&(cur_utf8->bytes), 
-			sizeof(length * uint8_t), 1, jcf->f) != anyOf(0, 1)) {
+			sizeof(length * sizeof(uint8_t)), 1, jcf->f) != anyOf(0, 1)) {
 			    	return (-1);
 			}
 		
@@ -526,15 +526,16 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	 * them in the pool. 
 	 */
 	if (jcf->depends_flag) {
-		for (int i = 0; i < constant_pool_count; i++) {
-			uint8_t t = constant_pool_count[i]->tag;
+		for (int i = 1; i < constant_pool_count; i++) {
+			uint8_t t = jcf->constant_pool.pool[i]->tag;
 			if (t == JCF_CONSTANT_Fieldref || 
 			    t == JCF_CONSTANT_Methodref ||
 			    t == JCF_CONSTANT_InterfaceMethodref) {
-				printf("Dependency - ");
-                		print_jcf_constant(jcf, i, t);
-				printf("\n");
+					printf("Dependency - ");
+                	print_jcf_constant(jcf, i, t);
+					printf("\n");
 			}
+			
 		} 
 	}
 
