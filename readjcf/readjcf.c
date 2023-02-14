@@ -390,23 +390,30 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	if (fread(&constant_pool_count, sizeof(constant_pool_count),
 	    1, jcf->f) != 1) {
 		return (-1);
-		}
+		printf("Read the constant pool count.");
+	}
 
 	// Allocate the constant pool.
 	constant_pool_count = ntohs(constant_pool_count);
 	jcf->constant_pool.pool = Malloc(constant_pool_count * 
 					sizeof(struct jcf_cp_info *));
 	jcf->constant_pool.count = constant_pool_count;
-
+	
+	printf("constant count is %u  ", constant_pool_count);
 	// Read the constant pool.
 	for (i = 1; i < constant_pool_count; i++) {
+		printf("current index: %u    ", i);
+		printf("current flag: %u    ", flag);
+
 		if (flag == 0)
 			continue;
 
 		// Read the constant pool info tag.
-		if (fread(&tag, sizeof(tag), 1, jcf->f) != 1) 
+		if (fread(&tag, sizeof(tag), 1, jcf->f) != 1) {
+			printf("Read the constant pool info tag.");
 			return (-1);
-
+		}
+		printf("tag is %u    ", tag);
 		// Process the rest of the constant info.
 		switch (tag) {
 		case JCF_CONSTANT_String:
@@ -440,6 +447,10 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 				(struct jcf_cp_info *)cur_2u2;
 			if (fread(&(cur_2u2->body.u2_1), 
 			    sizeof(cur_2u2->body.u2_1), 1, jcf->f) != 1) {
+			    	return (-1);
+			    }
+			if (fread(&(cur_2u2->body.u2_2), 
+			    sizeof(cur_2u2->body.u2_2), 1, jcf->f) != 1) {
 			    	return (-1);
 			    }
 			cur_2u2->tag = tag;
@@ -497,22 +508,15 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			if (fread(&(length), sizeof(length), 1, jcf->f) != 1) {
 			    	return (-1);
 			}
+			length = ntohs(length);
 			struct jcf_cp_utf8_info *cur_utf8 = 
 			    Malloc(sizeof(struct jcf_cp_utf8_info) 
 			    + length + 1);
 			jcf->constant_pool.pool[i] = 
 				(struct jcf_cp_info *)cur_utf8;
-			length = ntohs(length);
-			if (fread(&(cur_utf8->length), 
-			sizeof(cur_utf8->length), 1, jcf->f) != 1) {
-			    	return (-1);
-			}
 			cur_utf8->bytes[length] = '\0';
-			int r = fread(&(cur_utf8->bytes), 
-			    sizeof(length * sizeof(uint8_t)), 1, jcf->f);
-			if (r != 0 || r != 1) {
-			    	return (-1);
-			}
+			fread(&(cur_utf8->bytes), 
+			    sizeof(uint8_t) * length, 1, jcf->f);
 			cur_utf8->tag = tag;
 			cur_utf8->length = length;
 			flag = 1;
@@ -892,36 +896,34 @@ main(int argc, char **argv)
 
 	// Open the class file.
 	jcf.f = fopen(argv[optind], "r");
-	if (jcf.f == NULL) {
+ 	if (jcf.f == NULL) {
 		readjcf_error();
 		return (1); // Indicate an error.
 	}
-
 	// Process the JCF header.
 	err = process_jcf_header(&jcf);
 	if (err != 0)
 		goto failed;
-
 	// Process the JCF constant pool.
 	err = process_jcf_constant_pool(&jcf);
 	if (err != 0)
 		goto failed;
-
+	printf("3");
 	// Process the JCF body.
 	err = process_jcf_body(&jcf);
 	if (err != 0)
 		goto failed;
-
+	printf("4");
 	// Process the JCF interfaces.
 	err = process_jcf_interfaces(&jcf);
 	if (err != 0)
 		goto failed;
-
+	printf("5");
 	// Process the JCF fields.
 	err = process_jcf_fields(&jcf);
 	if (err != 0)
 		goto failed;
-
+	printf("5");
 	// Process the JCF methods.
 	err = process_jcf_methods(&jcf);
 	if (err != 0)
