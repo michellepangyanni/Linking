@@ -317,6 +317,7 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 	case JCF_CONSTANT_Utf8:
 	{
 		// Print the UTF8.
+
 		struct jcf_cp_utf8_info *utf8 = (struct jcf_cp_utf8_info *)info;
 		printf("%.*s", utf8 ->length, utf8 ->bytes);
 		break;
@@ -390,7 +391,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	if (fread(&constant_pool_count, sizeof(constant_pool_count),
 		1, jcf->f) != 1) {
 		return (-1);
-		printf("Read the constant pool count.");
+		printf("Read the constant pool count.\n");
 	}
 
 	// Allocate the constant pool.
@@ -404,7 +405,6 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	for (i = 1; i < constant_pool_count; i++) {
 		// printf("current index: %u    ", i);
 		// printf("current flag: %u    ", flag);
-
 		if (flag == 0)
 			continue;
 
@@ -556,6 +556,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	 */
 	if (jcf->depends_flag) {
 		for (int i = 1; i < constant_pool_count; i++) {
+			if (jcf->constant_pool.pool[i] != NULL){
 			uint8_t t = jcf->constant_pool.pool[i]->tag;
 			if (t == JCF_CONSTANT_Fieldref || 
 				t == JCF_CONSTANT_Methodref ||
@@ -564,6 +565,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 						print_jcf_constant(jcf, i, t);
 				printf("\n");
 			}	
+			}
 		} 
 	}
 
@@ -805,12 +807,9 @@ process_jcf_attributes(struct jcf_state *jcf)
 		//Testing
 		if (jcf ->verbose_flag){
 			printf("Attribute count: %u\n", attributes_count);
-			printf("		Attribute #0: 
-			    name index: %u\n", name_index);
-			printf("		Attribute #0: 
-			    length: %u\n", length);
-			printf("		Attribute #0: 
-			    info data: %u\n", info_data);
+			printf("		Attribute #0: name index: %u\n", name_index);
+			printf("		Attribute #0: length: %u\n", length);
+			printf("		Attribute #0: info data: %u\n", info_data);
 		}
 	}
 	return (0);
