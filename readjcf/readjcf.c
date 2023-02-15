@@ -557,14 +557,14 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	if (jcf->depends_flag) {
 		for (int i = 1; i < constant_pool_count; i++) {
 			if (jcf->constant_pool.pool[i] != NULL){
-			uint8_t t = jcf->constant_pool.pool[i]->tag;
-			if (t == JCF_CONSTANT_Fieldref || 
-				t == JCF_CONSTANT_Methodref ||
-				t == JCF_CONSTANT_InterfaceMethodref) {
-				printf("Dependency - ");
-						print_jcf_constant(jcf, i, t);
-				printf("\n");
-			}	
+				uint8_t t = jcf->constant_pool.pool[i]->tag;
+				if (t == JCF_CONSTANT_Fieldref || 
+					t == JCF_CONSTANT_Methodref ||
+					t == JCF_CONSTANT_InterfaceMethodref) {
+					printf("Dependency - ");
+					print_jcf_constant(jcf, i, t);
+					printf("\n");
+				}	
 			}
 		} 
 	}
@@ -894,7 +894,7 @@ main(int argc, char **argv)
 	jcf.constant_pool.pool = NULL;
 
 	// Open the class file.
-	printf("%s", argv[optind]);
+
 
 	jcf.f = fopen(argv[optind], "r");
  	if (jcf.f == NULL) {
