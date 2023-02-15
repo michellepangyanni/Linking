@@ -265,7 +265,7 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 
 	// Verify the index: index not 0, and smaller than count.
 	
-	if (index == 0 || index >= jcf->constant_pool.count){
+	if (index < 1 || index >= jcf->constant_pool.count){
 		return (-1);
 	}
 
@@ -403,10 +403,12 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	// printf("constant count is %u  ", constant_pool_count);
 	// Read the constant pool.
 	for (i = 1; i < constant_pool_count; i++) {
-		// printf("current index: %u    ", i);
-		// printf("current flag: %u    ", flag);
-		if (flag == 0)
+		// printf("current index: %u    \n", i);
+		// printf("current flag: %u    \n", flag);
+		if (flag == 0) {
+			flag = 1;
 			continue;
+		}
 
 		// Read the constant pool info tag.
 		if (fread(&tag, sizeof(tag), 1, jcf->f) != 1) {
@@ -901,10 +903,13 @@ main(int argc, char **argv)
 		readjcf_error();
 		return (1); // Indicate an error.
 	}
+	printf("1");
 	// Process the JCF header.
 	err = process_jcf_header(&jcf);
 	if (err != 0)
 		goto failed;
+	printf("2");
+
 	// Process the JCF constant pool.
 	err = process_jcf_constant_pool(&jcf);
 	if (err != 0)
