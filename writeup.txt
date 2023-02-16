@@ -1,5 +1,5 @@
 COMP 321 Project 3: Linking
-<Michelle Pang, yp29; >
+<Michelle Pang, yp29; Lily Gao, qg8>
 
 ---(Do not write lines of text that exceed the width of this line.)------------
 
@@ -55,7 +55,16 @@ READJCF
 
 TESTING STRATEGY
 
-<Replace with a detailed description of your testing strategy.>
+Black Box Testing
+1. class file with valid magic number.
+2. class file with invalid magic number.
+3. class file with valid header.
+4. class file with invalid header.
+5. class file that includes all possible tags.
+6. class file with valid interfaces.
+7. class file with invalid interfaces.
+8. class file with valid attributes.
+9. class file with invalid attributes.
 
 TWO THINGS I LEARNED
 

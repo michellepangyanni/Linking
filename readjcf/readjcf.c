@@ -4,7 +4,7 @@
  * This program reads a single Java Class File and prints out its
  * dependencies and exports, as requested by command-line flags.
  * 
- * <Put your name(s) and NetID(s) here>
+ * <Lily Gao qg8; >
  */
 
 #include <netinet/in.h>
