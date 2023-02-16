@@ -829,7 +829,7 @@ process_jcf_attributes(struct jcf_state *jcf)
 		uint16_t name_index;
 		uint32_t length;
 		uint8_t info_data;
-		u_int32_t j;
+		uint32_t j;
 
 		// Read the attribute name index.
 		if (fread(&name_index, sizeof(name_index), 1, jcf -> f) != 1){

@@ -51,20 +51,50 @@ refaddr = ADDR(s) + r.offset
 	= (unsigned) (0x400500 + (-4) - 0x4004da)
 	= 0x22
 
-READJCF
-
 TESTING STRATEGY
 
 Black Box Testing
-1. class file with valid magic number.
-2. class file with invalid magic number.
-3. class file with valid header.
-4. class file with invalid header.
-5. class file that includes all possible tags.
-6. class file with valid interfaces.
-7. class file with invalid interfaces.
-8. class file with valid attributes.
-9. class file with invalid attributes.
+<
+1. A .class file with valid magic number(of 0xCAFEBABE).
+2. A .class file with invalid magic number(not of 0xCAFEBABE).
+3. A .class file with a header that cannot be read because the file
+quit reading early when reading through the constant pool.
+4. A .class file with a header that can be read.
+5. A .class file that includes a various of combination of tags to make sure 
+they are printed out in the same order.
+6. A .class file with an interface count that can be read.
+7. A .class file with an interface count that cannot be read because the file
+quit reading early when reading through the constant pool. 
+8. A .class file with an attributes count that can be read.
+9. A .class file with an attribute count that cannot be read because the file
+quit reading early when reading through the constant pool.
+10. A .class file that is truncated and contain extra bytes.
+11. A .class file in which all indices into the constant pool that are followed 
+while printing the dependencies and exports are invalid and the constant at 
+that index is not of the expected type (according to its tag).
+12. A .class file in which all indices into the constant pool that are followed 
+while printing the dependencies and exports are valid and the constant at 
+that index is of the expected type (according to its tag).
+13. A .class file with a header than cannot be read.
+14. A .class file with at least one incorrectly sized constant tag.
+15. A .class file with a body that cannot be read.
+16. A .class file with a different tag than index.
+17. A .class file with an invalid constant_pool_count.
+18. A .class file with an attribute name index that cannot be read.
+19. A .class file with an attribute length that cannot be read.
+20. A .class file with attribute data that cannot be read
+21. An empty .class file. 
+22. A .class file that does not print out all of the class’ dependencies.
+>
+
+Michelle's notes:
+<
+focus on correct output.
+Printing, verify files.
+read through constant pool... basic checking
+files does not quit early
+magic number, attribute
+>
 
 TWO THINGS I LEARNED
 
@@ -72,15 +102,5 @@ TWO THINGS I LEARNED
  provided code for this assignment but weren't taught in lecture or lab
  that you learned about while completing this assignment.>
 
-
-parse file use fread to 
-process -jcf-constant-pool()
-print-jcf-constant()//recursion to solve : check type of data. If is terminal, print it out, not: go another layer
-destory-jcf-constant-pool is used to free memory. 
-use different struct (malloc) to pass different sizes. 
-
-CODE:
-1. header, body
-2. java 
 
 
