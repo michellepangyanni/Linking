@@ -385,7 +385,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	// Allocate the constant pool.
 	constant_pool_count = ntohs(constant_pool_count);
 	jcf->constant_pool.pool = Malloc(constant_pool_count * 
-				    sizeof(struct jcf_cp_info *));
+            sizeof(struct jcf_cp_info *));
 	jcf->constant_pool.count = constant_pool_count;
 	
 	// Read the constant pool.
@@ -602,8 +602,8 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 
 				// Three cases we need to print dependency.
 				if (t == JCF_CONSTANT_Fieldref || 
-					t == JCF_CONSTANT_Methodref ||
-					t == JCF_CONSTANT_InterfaceMethodref) {
+				    t == JCF_CONSTANT_Methodref ||
+				    t == JCF_CONSTANT_InterfaceMethodref) {
 					printf("Dependency - ");
 					print_jcf_constant(jcf, i, t);
 					printf("\n");
@@ -776,7 +776,7 @@ process_jcf_fields_and_methods_helper(struct jcf_state *jcf)
 
 		// Print the info.
 		if (jcf->exports_flag &&
-			info.access_flags & JCF_ACC_PUBLIC) {
+		    info.access_flags & JCF_ACC_PUBLIC) {
 			printf("Export - ");
 			if (print_jcf_constant(jcf, info.name_index,
 			    JCF_CONSTANT_Utf8) != 0)
@@ -927,7 +927,7 @@ main(int argc, char **argv)
 	}
 	if (abort_flag || optind == argc || argc > optind + 1) {
 		fprintf(stderr, "usage: %s [-d] [-e] [-v] <input filename>\n",
-			argv[0]);
+                    argv[0]);
 			return (1); // Indicate an error.
 	}
 
