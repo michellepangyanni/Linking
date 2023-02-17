@@ -250,7 +250,7 @@ readjcf_error(void)
  */
 static int
 print_jcf_constant(struct jcf_state *jcf, uint16_t index,
-	uint8_t expected_tag)
+    uint8_t expected_tag)
 {
 	struct jcf_cp_info *info;
 
@@ -385,7 +385,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 	// Allocate the constant pool.
 	constant_pool_count = ntohs(constant_pool_count);
 	jcf->constant_pool.pool = Malloc(constant_pool_count * 
-					sizeof(struct jcf_cp_info *));
+				    sizeof(struct jcf_cp_info *));
 	jcf->constant_pool.count = constant_pool_count;
 	
 	// Read the constant pool.
@@ -569,11 +569,11 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			if (fread(&(cur_1u1_1u2->body.u1), 
                             sizeof(cur_1u1_1u2->body.u1), 1, jcf->f) != 1) {
 			        return (-1);
-			    }
+			}
 			if (fread(&(cur_1u1_1u2->body.u2), 
 			    sizeof(cur_1u1_1u2->body.u2), 1, jcf->f) != 1) {
 			        return (-1);
-			    }
+			}
 
 			// Update cur_1u1_1u2 fields.
 			cur_1u1_1u2->tag = tag;
@@ -632,7 +632,7 @@ destroy_jcf_constant_pool(struct jcf_constant_pool *pool)
 
 	// Free every memory allocated in the pool.
 	for (index = 0; index < pool -> count; index ++) {
-		if (pool -> pool[index] != NULL){
+		if (pool -> pool[index] != NULL) {
 			Free(pool -> pool[index]);
 		}
 	}
@@ -658,9 +658,8 @@ process_jcf_body(struct jcf_state *jcf)
 	assert(jcf != NULL);
 
 	// Read the body.
-	if (fread(&body, sizeof(struct jcf_body), 1, jcf -> f) != 1) {
+	if (fread(&body, sizeof(struct jcf_body), 1, jcf -> f) != 1) 
 		return (-1);
-	}
 
 	return (0);
 }
@@ -780,11 +779,11 @@ process_jcf_fields_and_methods_helper(struct jcf_state *jcf)
 			info.access_flags & JCF_ACC_PUBLIC) {
 			printf("Export - ");
 			if (print_jcf_constant(jcf, info.name_index,
-				JCF_CONSTANT_Utf8) != 0)
+			    JCF_CONSTANT_Utf8) != 0)
 				return (-1);
 			printf(" ");
 			if (print_jcf_constant(jcf, info.descriptor_index,
-				JCF_CONSTANT_Utf8) != 0)
+			    JCF_CONSTANT_Utf8) != 0)
 				return (-1);
 			printf("\n");
 		}
