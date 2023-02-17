@@ -286,10 +286,10 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 		 * separated by a '.'.
 		 */
 		struct jcf_cp_ref_info *ref = (struct jcf_cp_ref_info *)info;
-		print_jcf_constant(jcf, ref -> class_index, 
+		print_jcf_constant(jcf, ref->class_index, 
 		    JCF_CONSTANT_Class);
 		printf(".");
-		print_jcf_constant(jcf, ref -> name_and_type_index, 
+		print_jcf_constant(jcf, ref->name_and_type_index, 
 		    JCF_CONSTANT_NameAndType);
 		break;
 	}
@@ -300,10 +300,10 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 		struct jcf_cp_nameandtype_info *name_and_type = 
 		    (struct jcf_cp_nameandtype_info *)info;
 		print_jcf_constant(jcf, 
-		    name_and_type -> name_index, JCF_CONSTANT_Utf8);
+		    name_and_type->name_index, JCF_CONSTANT_Utf8);
 		printf(" ");
 		print_jcf_constant(jcf, 
-		    name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
+		    name_and_type->descriptor_index, JCF_CONSTANT_Utf8);
 		break;
 	}
 	case JCF_CONSTANT_Utf8:
@@ -338,7 +338,7 @@ process_jcf_header(struct jcf_state *jcf)
 	assert(jcf != NULL);
 
 	// Read the header ("jcf.f" must be a valid open file).
-	if (fread(&header, sizeof(struct jcf_header), 1, jcf -> f) != 1) 
+	if (fread(&header, sizeof(struct jcf_header), 1, jcf->f) != 1) 
 		return (-1);
 
 	//Byteswapping header's fields.
@@ -631,14 +631,14 @@ destroy_jcf_constant_pool(struct jcf_constant_pool *pool)
 	int index;
 
 	// Free every memory allocated in the pool.
-	for (index = 0; index < pool -> count; index ++) {
-		if (pool -> pool[index] != NULL) {
-			Free(pool -> pool[index]);
+	for (index = 0; index < pool->count; index++) {
+		if (pool->pool[index] != NULL) {
+			Free(pool->pool[index]);
 		}
 	}
 
 	//Free the entire pool itself.
-	Free(pool -> pool);
+	Free(pool->pool);
 }
 
 /*
@@ -658,7 +658,7 @@ process_jcf_body(struct jcf_state *jcf)
 	assert(jcf != NULL);
 
 	// Read the body.
-	if (fread(&body, sizeof(struct jcf_body), 1, jcf -> f) != 1) 
+	if (fread(&body, sizeof(struct jcf_body), 1, jcf->f) != 1) 
 		return (-1);
 
 	return (0);
@@ -688,14 +688,14 @@ process_jcf_interfaces(struct jcf_state *jcf)
 	assert(jcf != NULL);
 
 	// Read the interfaces count.
-	if (fread(&interface_count, sizeof(interface_count),1, jcf -> f) != 1) 
+	if (fread(&interface_count, sizeof(interface_count),1, jcf->f) != 1) 
 		return (-1);
 	
 	interface_count = ntohs(interface_count);
 
 	// Read the interfaces.
 	for (index = 0; index < interface_count; index++) {
-		if (fread(&interface, sizeof(interface), 1, jcf -> f) != 1) {
+		if (fread(&interface, sizeof(interface), 1, jcf->f) != 1) {
 			return (-1);
 		}
 	}
@@ -815,7 +815,7 @@ process_jcf_attributes(struct jcf_state *jcf)
 
 	// Read the attributes count.
 	if (fread(&attributes_count, sizeof(attributes_count), 1,
-	    jcf -> f) != 1) {
+	    jcf->f) != 1) {
 		return (-1);
 	}
 	attributes_count = ntohs(attributes_count);
@@ -828,13 +828,13 @@ process_jcf_attributes(struct jcf_state *jcf)
 		uint32_t j;
 
 		// Read the attribute name index.
-		if (fread(&name_index, sizeof(name_index), 1, jcf -> f) != 1)
+		if (fread(&name_index, sizeof(name_index), 1, jcf->f) != 1)
 			return (-1);
 		
 		name_index = ntohs(name_index);
 
 		// Read the attribute length.
-		if (fread(&length, sizeof(length), 1, jcf -> f) != 1)
+		if (fread(&length, sizeof(length), 1, jcf->f) != 1)
 			return (-1);
 		
 		length = ntohl(length);
@@ -842,7 +842,7 @@ process_jcf_attributes(struct jcf_state *jcf)
 		// Read the attribute data.
 		for (j = 0; j < length; j++) {
 			if (fread(&info_data, sizeof(info_data), 
-			    1, jcf -> f) != 1){
+			    1, jcf->f) != 1){
 				return (-1);
 			}
 		}
