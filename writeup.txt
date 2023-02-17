@@ -93,9 +93,7 @@ that index is of the expected type (according to its tag).
 26. A .class file which contains a subclass.
 27. A .class file which contains an interface.
 28. A .class file with interface cannot be read.
-
 >
-
 
 TWO THINGS I LEARNED
 <
