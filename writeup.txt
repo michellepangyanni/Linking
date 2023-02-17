@@ -85,6 +85,13 @@ that index is of the expected type (according to its tag).
 20. A .class file with attribute data that cannot be read
 21. An empty .class file. 
 22. A .class file that does not print out all of the class’ dependencies.
+23. A .class file with 0, 1 or multiple methods.
+24. A .class file which contains a superclass.
+25. A .class file which contains an abstract class.
+26. A .class file which contains a subclass.
+27. A .class file which contains an interface.
+28. A .class file with interface cannot be read.
+
 >
 
 Michelle's notes:
@@ -98,9 +105,15 @@ magic number, attribute
 
 TWO THINGS I LEARNED
 
-<Replace with a description of two features of C that are used in the
- provided code for this assignment but weren't taught in lecture or lab
- that you learned about while completing this assignment.>
+1. I learned about ntohl and ntohs functions. ntohl is used to byteswap 
+32-bit integers and ntohs is used to byteswap 16-bit integers.
+These two functions are useful and important because different machines have
+different byte ordering, and these two functions can convert the order to
+big-endian format.
 
-
+2. I learned a special design pattern in C from the zero length array "info" in 
+jcf_cp_info. This structure allows us to allocate memory for the array by 
+casting another structure to this general type or allocating 
+(sizeof(struct foo) + array_len) bytes. So we iterate the constant pool array 
+starting from index one.
 
