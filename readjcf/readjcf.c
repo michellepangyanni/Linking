@@ -286,7 +286,8 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 		 * separated by a '.'.
 		 */
 		struct jcf_cp_ref_info *ref = (struct jcf_cp_ref_info *)info;
-		print_jcf_constant(jcf, ref -> class_index, JCF_CONSTANT_Class);
+		print_jcf_constant(jcf, ref -> class_index, 
+		    JCF_CONSTANT_Class);
 		printf(".");
 		print_jcf_constant(jcf, ref -> name_and_type_index, 
 		    JCF_CONSTANT_NameAndType);
@@ -599,7 +600,7 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			if (jcf->constant_pool.pool[i] != NULL) {
 				uint8_t t = jcf->constant_pool.pool[i]->tag;
 
-				// Three cases when we need to print dependency.
+				// Three cases we need to print dependency.
 				if (t == JCF_CONSTANT_Fieldref || 
 					t == JCF_CONSTANT_Methodref ||
 					t == JCF_CONSTANT_InterfaceMethodref) {
