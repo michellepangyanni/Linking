@@ -4,7 +4,7 @@
  * This program reads a single Java Class File and prints out its
  * dependencies and exports, as requested by command-line flags.
  * 
- * <Lily Gao qg8; >
+ * <Lily Gao, qg8; Michelle Pang, yp29>
  */
 
 #include <netinet/in.h>
@@ -256,24 +256,23 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 
 	assert(jcf != NULL);
 
-	// Verify the index: index not 0, and smaller than count.
-	if (index < 1 || index >= jcf->constant_pool.count) {
+	// Verify the index.
+	if (index < 1 || index >= jcf->constant_pool.count) 
 		return (-1);
-	}
+	
 
-	// Verify the tag: expected tag = index tag.
+	// Verify the tag.
 	info = jcf->constant_pool.pool[index];
-	if (expected_tag != info->tag) {
+	if (expected_tag != info->tag) 
 		return (-1);
-	}
-
+	
 	// Print the constant.
 	switch (info->tag) {
 	case JCF_CONSTANT_Class:
 	{		
 		// Print the class.
 		struct jcf_cp_class_info *class = 
-			(struct jcf_cp_class_info *)info;
+		    (struct jcf_cp_class_info *)info;
 		print_jcf_constant(jcf, class->name_index, JCF_CONSTANT_Utf8); 
 		break;
 	}
@@ -290,26 +289,27 @@ print_jcf_constant(struct jcf_state *jcf, uint16_t index,
 		print_jcf_constant(jcf, ref -> class_index, JCF_CONSTANT_Class);
 		printf(".");
 		print_jcf_constant(jcf, ref -> name_and_type_index, 
-			JCF_CONSTANT_NameAndType);
+		    JCF_CONSTANT_NameAndType);
 		break;
 	}
 		
 	case JCF_CONSTANT_NameAndType:
 	{
-		// Print the name and type(separated by a " ").
+		// Print the name and type (separated by a " ").
 		struct jcf_cp_nameandtype_info *name_and_type = 
-			(struct jcf_cp_nameandtype_info *)info;
+		    (struct jcf_cp_nameandtype_info *)info;
 		print_jcf_constant(jcf, 
-			name_and_type -> name_index, JCF_CONSTANT_Utf8);
+		    name_and_type -> name_index, JCF_CONSTANT_Utf8);
 		printf(" ");
 		print_jcf_constant(jcf, 
-			name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
+		    name_and_type -> descriptor_index, JCF_CONSTANT_Utf8);
 		break;
 	}
 	case JCF_CONSTANT_Utf8:
 	{
 		// Print the UTF8.
-		struct jcf_cp_utf8_info *utf8 = (struct jcf_cp_utf8_info *)info;
+		struct jcf_cp_utf8_info *utf8 = 
+                    (struct jcf_cp_utf8_info *)info;
 		printf("%.*s", utf8 ->length, utf8 ->bytes);
 		break;
 	}
@@ -337,19 +337,18 @@ process_jcf_header(struct jcf_state *jcf)
 	assert(jcf != NULL);
 
 	// Read the header ("jcf.f" must be a valid open file).
-	if (fread(&header, sizeof(struct jcf_header), 1, jcf -> f) != 1) {
+	if (fread(&header, sizeof(struct jcf_header), 1, jcf -> f) != 1) 
 		return (-1);
-	}
 
-	//Byteswapping
+	//Byteswapping header's fields.
 	header.magic = ntohl(header.magic);
 	header.minor_version = ntohs(header.minor_version);
 	header.major_version = ntohs(header.major_version);
 
 	// Verify the magic number.
-	if (header.magic != JCF_MAGIC) {
+	if (header.magic != JCF_MAGIC) 
 		return (-1);
-	}
+	
 
 	return (0);
 }
@@ -378,9 +377,8 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 
 	// Read the constant pool count.
 	if (fread(&constant_pool_count, sizeof(constant_pool_count),
-		1, jcf->f) != 1) {
+            1, jcf->f) != 1) {
 		return (-1);
-		printf("Read the constant pool count.\n");
 	}
 
 	// Allocate the constant pool.
@@ -399,10 +397,9 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 		}
 
 		// Read the constant pool info tag.
-		if (fread(&tag, sizeof(tag), 1, jcf->f) != 1) {
-			printf("Read the constant pool info tag.");
+		if (fread(&tag, sizeof(tag), 1, jcf->f) != 1) 
 			return (-1);
-		}
+		
 		
 		// Process the rest of the constant info.
 		switch (tag) {
@@ -416,15 +413,15 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 
 			// Allocate current pool info.
 			struct jcf_cp_info_1u2 *cur_u2 = 
-				Malloc(sizeof(struct jcf_cp_info_1u2));
+			    Malloc(sizeof(struct jcf_cp_info_1u2));
 			jcf->constant_pool.pool[i] = 
-				(struct jcf_cp_info *)cur_u2;
+			    (struct jcf_cp_info *)cur_u2;
 
 			// Read and check validity of u2.
 			if (fread(&(cur_u2->u2), 
-				sizeof(cur_u2->u2), 1, jcf->f) != 1) {
-					return (-1);
-				}
+			    sizeof(cur_u2->u2), 1, jcf->f) != 1) {
+				return (-1);
+			}
 
 			// Update the cur_u2 fields.
 			cur_u2->tag = tag;
@@ -445,19 +442,19 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 
 			// Allocate current pool info.
 			struct jcf_cp_info_2u2 *cur_2u2 = 
-				Malloc(sizeof(struct jcf_cp_info_2u2));
+			    Malloc(sizeof(struct jcf_cp_info_2u2));
 			jcf->constant_pool.pool[i] = 
-				(struct jcf_cp_info *)cur_2u2;
+			    (struct jcf_cp_info *)cur_2u2;
 
 			// Read and check validity of two u2.
 			if (fread(&(cur_2u2->body.u2_1), 
 			    sizeof(cur_2u2->body.u2_1), 1, jcf->f) != 1) {
 			    	return (-1);
-			    }
+			}
 			if (fread(&(cur_2u2->body.u2_2), 
 			    sizeof(cur_2u2->body.u2_2), 1, jcf->f) != 1) {
 			    	return (-1);
-			    }
+			}
 			
 			// Update the cur_2u2 fields.
 			cur_2u2->tag = tag;
@@ -475,15 +472,15 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 		
 			// Allocate current pool info.
 			struct jcf_cp_info_1u4 *cur_u4 = 
-				Malloc(sizeof(struct jcf_cp_info_1u4));
+			    Malloc(sizeof(struct jcf_cp_info_1u4));
 			jcf->constant_pool.pool[i] = 
-				(struct jcf_cp_info *)cur_u4;
+			    (struct jcf_cp_info *)cur_u4;
 
 			// Read and check validity of u4.
 			if (fread(&(cur_u4->u4), 
-				sizeof(cur_u4->u4), 1, jcf->f) != 1) {
+			    sizeof(cur_u4->u4), 1, jcf->f) != 1) {
 					return (-1);
-				}
+			}
 
 			// Update cur_u4 fields.
 			cur_u4->tag = tag;
@@ -501,18 +498,18 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 
 			// Allocate current pool info.
 			struct jcf_cp_info_2u4 *cur_2u4 = 
-				Malloc(sizeof(struct jcf_cp_info_2u4));
+			    Malloc(sizeof(struct jcf_cp_info_2u4));
 			jcf->constant_pool.pool[i] = 
-				(struct jcf_cp_info *)cur_2u4;
+			    (struct jcf_cp_info *)cur_2u4;
 			
 			// Read and check validity of two u4.
 			if (fread(&(cur_2u4->body.u4_1), 
-			sizeof(cur_2u4->body.u4_1), 1, jcf->f) != 1) {
-					return (-1);
+			    sizeof(cur_2u4->body.u4_1), 1, jcf->f) != 1) {
+				return (-1);
 			}
 			if (fread(&(cur_2u4->body.u4_2), 
-			sizeof(cur_2u4->body.u4_2), 1, jcf->f) != 1) {
-					return (-1);
+			    sizeof(cur_2u4->body.u4_2), 1, jcf->f) != 1) {
+				return (-1);
 			}
 
 			// Update cur_2u4 fields.
@@ -530,17 +527,17 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 			
 			// Declare, read, and update length.
 			uint16_t length;
-			if (fread(&(length), sizeof(length), 1, jcf->f) != 1) {
+			if (fread(&(length), sizeof(length), 1, jcf->f) != 1) 
 			    	return (-1);
-			}
+			
 			length = ntohs(length);
 
 			// Allocate current pool info.
 			struct jcf_cp_utf8_info *cur_utf8 = 
-				Malloc(sizeof(struct jcf_cp_utf8_info) 
-				+ length + 1);
+			    Malloc(sizeof(struct jcf_cp_utf8_info) 
+			    + length + 1);
 			jcf->constant_pool.pool[i] = 
-				(struct jcf_cp_info *)cur_utf8;
+			    (struct jcf_cp_info *)cur_utf8;
 
 			// Add NUL-terminator to the string.
 			cur_utf8->bytes[length] = '\0';
@@ -563,19 +560,19 @@ process_jcf_constant_pool(struct jcf_state *jcf)
 		
 			// Allocate current pool info.
 			struct jcf_cp_info_1u1_1u2 *cur_1u1_1u2 = 
-				Malloc(sizeof(struct jcf_cp_info_1u1_1u2));
+			    Malloc(sizeof(struct jcf_cp_info_1u1_1u2));
 			jcf->constant_pool.pool[i] = 
-				(struct jcf_cp_info *)cur_1u1_1u2;
+			    (struct jcf_cp_info *)cur_1u1_1u2;
 			
 			// Read and check validity of u1 and u2.
 			if (fread(&(cur_1u1_1u2->body.u1), 
-				sizeof(cur_1u1_1u2->body.u1), 1, jcf->f) != 1) {
-					return (-1);
-				}
+                            sizeof(cur_1u1_1u2->body.u1), 1, jcf->f) != 1) {
+			        return (-1);
+			    }
 			if (fread(&(cur_1u1_1u2->body.u2), 
-				sizeof(cur_1u1_1u2->body.u2), 1, jcf->f) != 1) {
-					return (-1);
-				}
+			    sizeof(cur_1u1_1u2->body.u2), 1, jcf->f) != 1) {
+			        return (-1);
+			    }
 
 			// Update cur_1u1_1u2 fields.
 			cur_1u1_1u2->tag = tag;
@@ -632,15 +629,15 @@ destroy_jcf_constant_pool(struct jcf_constant_pool *pool)
 	assert(pool->pool != NULL);
 	int index;
 
-	//Free every memory allocated in the pool
-	for (index = 0; index < pool ->count; index ++) {
+	// Free every memory allocated in the pool.
+	for (index = 0; index < pool -> count; index ++) {
 		if (pool -> pool[index] != NULL){
-			free(pool -> pool[index]);
+			Free(pool -> pool[index]);
 		}
 	}
 
 	//Free the entire pool itself.
-	free(pool -> pool);
+	Free(pool -> pool);
 }
 
 /*
@@ -684,17 +681,16 @@ process_jcf_interfaces(struct jcf_state *jcf)
 	uint16_t interface_count;
 	uint16_t interface;
 
-	//Byteswapping： Question--> should I do it here once, or do it 
-	//twice like implemented below?
+	//Byteswap interface_count and interface.
 	interface_count = ntohs(interface_count);
 	interface = ntohs(interface);
 
 	assert(jcf != NULL);
 
 	// Read the interfaces count.
-	if (fread(&interface_count, sizeof(interface_count),1, jcf -> f) != 1) {
+	if (fread(&interface_count, sizeof(interface_count),1, jcf -> f) != 1) 
 		return (-1);
-	}
+	
 	interface_count = ntohs(interface_count);
 
 	// Read the interfaces.
@@ -819,7 +815,7 @@ process_jcf_attributes(struct jcf_state *jcf)
 
 	// Read the attributes count.
 	if (fread(&attributes_count, sizeof(attributes_count), 1,
-		jcf -> f) != 1){
+	    jcf -> f) != 1) {
 		return (-1);
 	}
 	attributes_count = ntohs(attributes_count);
@@ -832,33 +828,33 @@ process_jcf_attributes(struct jcf_state *jcf)
 		uint32_t j;
 
 		// Read the attribute name index.
-		if (fread(&name_index, sizeof(name_index), 1, jcf -> f) != 1){
+		if (fread(&name_index, sizeof(name_index), 1, jcf -> f) != 1)
 			return (-1);
-		}
+		
 		name_index = ntohs(name_index);
 
 		// Read the attribute length.
-		if (fread(&length, sizeof(length), 1, jcf -> f) != 1){
+		if (fread(&length, sizeof(length), 1, jcf -> f) != 1)
 			return (-1);
-		}
+		
 		length = ntohl(length);
 
 		// Read the attribute data.
-		for (j = 0; j < length; j++){
+		for (j = 0; j < length; j++) {
 			if (fread(&info_data, sizeof(info_data), 
-				1, jcf -> f) != 1){
+			    1, jcf -> f) != 1){
 				return (-1);
 			}
 		}
 
 		//Testing
-		if (jcf ->verbose_flag){
+		if (jcf ->verbose_flag) {
 			printf("Attribute count: %u\n", attributes_count);
-			printf("		Attribute #0: name index: %u\n", 
+			printf("	       Attribute #0: name index: %u\n", 
 			    name_index);
-			printf("		Attribute #0: length: %u\n", 
+			printf("	       Attribute #0: length: %u\n", 
 			    length);
-			printf("		Attribute #0: info data: %u\n", 
+			printf("	       Attribute #0: info data: %u\n", 
 			    info_data);
 		}
 	}

@@ -40,7 +40,9 @@ refaddr = ADDR(s) + r.offset
 	= (unsigned) (0xa)
     = 0xa
 					
-B. The value of the relocated reference to swap in the callq instruction is 0x22. 
+B. The value of the relocated reference to swap in the callq instruction is 
+   0x22.
+
 ADDR(s) = 0x4004d0
 and
 ADDR(r.symbol) = ADDR(swap) = 0x400500
@@ -94,17 +96,9 @@ that index is of the expected type (according to its tag).
 
 >
 
-Michelle's notes:
-<
-focus on correct output.
-Printing, verify files.
-read through constant pool... basic checking
-files does not quit early
-magic number, attribute
->
 
 TWO THINGS I LEARNED
-
+<
 1. I learned about ntohl and ntohs functions. ntohl is used to byteswap 
 32-bit integers and ntohs is used to byteswap 16-bit integers.
 These two functions are useful and important because different machines have
@@ -116,4 +110,5 @@ jcf_cp_info. This structure allows us to allocate memory for the array by
 casting another structure to this general type or allocating 
 (sizeof(struct foo) + array_len) bytes. So we iterate the constant pool array 
 starting from index one.
+>
 
