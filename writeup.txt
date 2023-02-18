@@ -93,6 +93,20 @@ that index is of the expected type (according to its tag).
 26. A .class file which contains a subclass.
 27. A .class file which contains an interface.
 28. A .class file with interface cannot be read.
+29. A .class file which contains a concrete class.
+30. A .class file which contains a concrete class that extends a superclass.
+31. A .class file which contains a concrete class that implements an interface.
+32. A .class file which contains a concrete class that extends a superclass
+    and implements an interface.
+33. A .class file containing private fields and methods.
+34. A .class file containing proteced fields and methods.
+35. A .class file containing public fileds and methods.
+36. A .class file containing a mix of private, protected, and public fields and
+    methods.
+37. Test with -d in command.
+38. Test with -e in command.
+39. Test with -d -e and -e -d in command.
+40. A .class file with invalid constant pool count.
 >
 
 TWO THINGS I LEARNED
